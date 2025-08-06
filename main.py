@@ -1,5 +1,6 @@
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
+from vector import retriever
 
 model = OllamaLLM(model="llama3.2")
 
@@ -18,9 +19,16 @@ prompt = ChatPromptTemplate.from_template(template)
 
 chain = prompt | model
 
-result = chain.invoke({
-    "reviews": "The pizza at pizza1 restaurant was great! The crust was crispy and the cheese was gooey. The toppings were fresh and the sauce was delicious. I would definitely recommend this pizza to anyone. However, i would still recommend pizza2 restaurant over pizza1 restaurant.",
-    "question": "What is the best pizza in town?"
-})
+while True:
+    print("\n\n ------------------")
+    question = input("Enter a question (Press 'q' to exit): ")
+    print("\n\n")
+    if question == "q":
+        break
+    reviews = retriever.invoke(question)
+    result = chain.invoke({
+    "reviews": reviews,
+    "question": question,
+    })
 
-print(result)
+    print(result)
